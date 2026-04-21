@@ -286,6 +286,12 @@ body[data-site-shell="market"] {
     linear-gradient(180deg, rgba(255, 248, 238, 0.98) 0%, rgba(255, 241, 223, 1) 100%);
 }
 
+html.dark .factory-brand-editorial {
+  background-image: radial-gradient(circle at top left, rgba(56, 189, 248, 0.06), transparent 28%),
+    linear-gradient(180deg, #070708 0%, #0a0a0c 100%);
+  color-scheme: dark;
+}
+
 .factory-brand-directory {
   background-image:
     radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 24%),

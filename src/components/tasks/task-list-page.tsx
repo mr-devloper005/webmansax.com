@@ -57,33 +57,46 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
   }))
   const { recipe } = getFactoryState()
   const layoutKey = recipe.taskLayouts[task as keyof typeof recipe.taskLayouts] || `${task}-${task === 'listing' ? 'directory' : 'editorial'}`
-  const shellClass = variantShells[layoutKey as keyof typeof variantShells] || 'bg-background'
   const Icon = taskIcons[task] || LayoutGrid
 
+  const isArticleNewsroom = layoutKey === 'article-editorial' || layoutKey === 'article-journal'
+  const shellClass = isArticleNewsroom
+    ? 'bg-[#070708] text-zinc-100'
+    : variantShells[layoutKey as keyof typeof variantShells] || 'bg-background'
+
   const isDark = ['image-masonry', 'image-portfolio', 'profile-creator'].includes(layoutKey)
-  const ui = isDark
-    ? {
-        muted: 'text-slate-300',
-        panel: 'border border-white/10 bg-white/6',
-        soft: 'border border-white/10 bg-white/5',
-        input: 'border-white/10 bg-white/6 text-white',
-        button: 'bg-white text-slate-950 hover:bg-slate-200',
-      }
-    : layoutKey.startsWith('article') || layoutKey.startsWith('sbm')
+  const newsroomUi = {
+    muted: 'text-zinc-500',
+    panel: 'border border-white/[0.08] bg-[#121214] shadow-[0_24px_80px_rgba(0,0,0,0.35)]',
+    soft: 'border border-white/[0.08] bg-[#0f0f11] text-zinc-200',
+    input: 'border-white/10 bg-white/5 text-zinc-100 placeholder:text-zinc-500',
+    button: 'bg-sky-500 text-white hover:bg-sky-400',
+  }
+  const ui = isArticleNewsroom
+    ? newsroomUi
+    : isDark
       ? {
-          muted: 'text-[#72594a]',
-          panel: 'border border-[#dbc6b6] bg-white/90',
-          soft: 'border border-[#dbc6b6] bg-[#fff8ef]',
-          input: 'border border-[#dbc6b6] bg-white text-[#2f1d16]',
-          button: 'bg-[#2f1d16] text-[#fff4e4] hover:bg-[#452920]',
+          muted: 'text-slate-300',
+          panel: 'border border-white/10 bg-white/6',
+          soft: 'border border-white/10 bg-white/5',
+          input: 'border-white/10 bg-white/6 text-white',
+          button: 'bg-white text-slate-950 hover:bg-slate-200',
         }
-      : {
-          muted: 'text-slate-600',
-          panel: 'border border-slate-200 bg-white',
-          soft: 'border border-slate-200 bg-slate-50',
-          input: 'border border-slate-200 bg-white text-slate-950',
-          button: 'bg-slate-950 text-white hover:bg-slate-800',
-        }
+      : layoutKey.startsWith('article') || layoutKey.startsWith('sbm')
+        ? {
+            muted: 'text-[#72594a]',
+            panel: 'border border-[#dbc6b6] bg-white/90',
+            soft: 'border border-[#dbc6b6] bg-[#fff8ef]',
+            input: 'border border-[#dbc6b6] bg-white text-[#2f1d16]',
+            button: 'bg-[#2f1d16] text-[#fff4e4] hover:bg-[#452920]',
+          }
+        : {
+            muted: 'text-slate-600',
+            panel: 'border border-slate-200 bg-white',
+            soft: 'border border-slate-200 bg-slate-50',
+            input: 'border border-slate-200 bg-white text-slate-950',
+            button: 'bg-slate-950 text-white hover:bg-slate-800',
+          }
 
   return (
     <div className={`min-h-screen ${shellClass}`}>
@@ -149,21 +162,36 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         {layoutKey === 'article-editorial' || layoutKey === 'article-journal' ? (
           <section className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div>
-              <p className={`text-xs uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || task}</p>
-              <h1 className="mt-3 max-w-4xl text-5xl font-semibold tracking-[-0.05em] text-foreground">{taskConfig?.description || 'Latest posts'}</h1>
-              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>This reading surface uses slower pacing, stronger typographic hierarchy, and more breathing room so long-form content feels intentional rather than squeezed into a generic feed.</p>
+              <p className={`text-xs font-semibold uppercase tracking-[0.28em] ${ui.muted}`}>{taskConfig?.label || 'Articles'}</p>
+              <h1 className="mt-3 max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-zinc-50 sm:text-5xl">
+                {taskConfig?.description || 'Stories worth reading twice'}
+              </h1>
+              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>
+                Fresh analysis, reporting, and explainers—published on a calm, news-desk layout with room for context, not clutter.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3 text-xs font-medium uppercase tracking-wider text-zinc-500">
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-zinc-400">Updated daily</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-zinc-400">Editorial standards</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-zinc-400">Reader-first</span>
+              </div>
             </div>
-            <div className={`rounded-[2rem] p-6 ${ui.panel}`}>
-              <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${ui.muted}`}>Reading note</p>
-              <p className={`mt-4 text-sm leading-7 ${ui.muted}`}>Use category filters to jump between topics without collapsing the page into the same repeated card rhythm used by other task types.</p>
-              <form className="mt-5 flex items-center gap-3" action={taskConfig?.route || '#'}>
-                <select name="category" defaultValue={normalizedCategory} className={`h-11 flex-1 rounded-xl px-3 text-sm ${ui.input}`}>
+            <div className={`rounded-3xl p-6 ${ui.panel}`}>
+              <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${ui.muted}`}>Browse by topic</p>
+              <p className={`mt-4 text-sm leading-7 ${ui.muted}`}>
+                Narrow the list by category to follow the beats you care about—markets, companies, or deeper explainers.
+              </p>
+              <form className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center" action={taskConfig?.route || '#'}>
+                <select name="category" defaultValue={normalizedCategory} className={`h-11 flex-1 rounded-xl border px-3 text-sm ${ui.input}`}>
                   <option value="all">All categories</option>
                   {CATEGORY_OPTIONS.map((item) => (
-                    <option key={item.slug} value={item.slug}>{item.name}</option>
+                    <option key={item.slug} value={item.slug}>
+                      {item.name}
+                    </option>
                   ))}
                 </select>
-                <button type="submit" className={`h-11 rounded-xl px-4 text-sm font-medium ${ui.button}`}>Apply</button>
+                <button type="submit" className={`h-11 shrink-0 rounded-xl px-5 text-sm font-semibold ${ui.button}`}>
+                  Apply
+                </button>
               </form>
             </div>
           </section>
