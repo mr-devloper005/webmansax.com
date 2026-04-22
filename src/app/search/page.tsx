@@ -72,27 +72,28 @@ export default async function SearchPage({
 
   return (
     <PageShell
-      title="Search"
+      eyebrow="Discovery"
+      title="Search the archive"
       description={
         query
-          ? `Results for "${query}"`
-          : "Browse the latest posts across every task."
+          ? `Showing matches for “${query}” across articles and connected posts.`
+          : "Search headlines, summaries, and tags—same dark desk layout as the homepage."
       }
       actions={
-        <form action="/search" className="flex w-full gap-2 sm:w-auto">
+        <form action="/search" className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <input type="hidden" name="master" value="1" />
           {category ? <input type="hidden" name="category" value={category} /> : null}
           {task ? <input type="hidden" name="task" value={task} /> : null}
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <Input
               name="q"
               defaultValue={query}
-              placeholder="Search across tasks..."
-              className="h-11 pl-9"
+              placeholder="Keywords, topics, authors…"
+              className="h-11 border-white/10 bg-white/5 pl-9 text-zinc-100 placeholder:text-zinc-500"
             />
           </div>
-          <Button type="submit" className="h-11">
+          <Button type="submit" className="h-11 bg-sky-500 text-white hover:bg-sky-400">
             Search
           </Button>
         </form>
@@ -107,8 +108,9 @@ export default async function SearchPage({
           })}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
-          No matching posts yet.
+        <div className="rounded-3xl border border-dashed border-white/15 bg-[#0c0c0e] p-14 text-center">
+          <p className="text-sm font-medium text-zinc-400">No matching stories yet.</p>
+          <p className="mt-2 text-xs text-zinc-600">Try a shorter phrase, another category, or clear filters.</p>
         </div>
       )}
     </PageShell>

@@ -6,56 +6,62 @@ import { Badge } from "@/components/ui/badge";
 import { SITE_CONFIG } from "@/lib/site-config";
 
 const roles = [
-  { title: "Product Designer", location: "Remote", type: "Full-time", level: "Mid" },
-  { title: "Frontend Engineer", location: "New York, NY", type: "Full-time", level: "Senior" },
-  { title: "Community Lead", location: "Remote", type: "Part-time", level: "Mid" },
+  { title: "Staff writer — Markets", location: "Remote (US/EU)", type: "Full-time", level: "Mid" },
+  { title: "Senior frontend engineer", location: "New York / Remote", type: "Full-time", level: "Senior" },
+  { title: "Audience & growth lead", location: "Remote", type: "Full-time", level: "Lead" },
 ];
 
 const benefits = [
-  "Flexible schedules and remote-first culture",
-  "Health, dental, and vision coverage",
-  "Annual learning stipend",
-  "Quarterly offsites and team retreats",
+  "Editorial-first culture: ship work readers actually open",
+  "Health stipend + equipment budget for your desk",
+  "Learning budget for data, design, and reporting tools",
+  "Async-friendly schedules with predictable publishing cadence",
 ];
+
+const cardClass = "rounded-3xl border border-white/[0.08] bg-[#121214] text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.35)]";
 
 export default function CareersPage() {
   return (
     <PageShell
-      title="Careers"
-      description={`Help us build the future of community-driven publishing at ${SITE_CONFIG.name}.`}
+      eyebrow="Careers"
+      title="Join the desk"
+      description={`Help shape how ${SITE_CONFIG.name} covers companies, markets, and ideas—with craft, speed, and zero corporate filler.`}
       actions={
-        <Button asChild>
-          <Link href="/contact">Apply Now</Link>
+        <Button asChild className="bg-sky-500 text-white hover:bg-sky-400">
+          <Link href="/contact">Introduce yourself</Link>
         </Button>
       }
     >
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-4">
           {roles.map((role) => (
-            <Card key={role.title} className="border-border bg-card">
+            <Card key={role.title} className={cardClass}>
               <CardContent className="p-6">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary">{role.level}</Badge>
-                  <Badge variant="outline">{role.type}</Badge>
+                  <Badge className="border-white/10 bg-white/10 text-zinc-200">{role.level}</Badge>
+                  <Badge variant="outline" className="border-white/15 text-zinc-400">
+                    {role.type}
+                  </Badge>
                 </div>
-                <h2 className="mt-3 text-lg font-semibold text-foreground">{role.title}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">{role.location}</p>
-                <Button variant="outline" className="mt-4" asChild>
-                  <Link href="/contact">View Role</Link>
+                <h2 className="mt-4 text-lg font-semibold text-zinc-50">{role.title}</h2>
+                <p className="mt-1 text-sm text-zinc-500">{role.location}</p>
+                <Button variant="outline" className="mt-5 border-white/15 text-zinc-100 hover:bg-white/10" asChild>
+                  <Link href="/contact">Ask about this role</Link>
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
-        <Card className="border-border bg-card">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-foreground">Why {SITE_CONFIG.name}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              We are building a product that helps people discover and share the best knowledge on the web.
+        <Card className={cardClass}>
+          <CardContent className="p-8">
+            <h3 className="text-lg font-semibold text-zinc-50">Why {SITE_CONFIG.name}</h3>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-400">
+              We are a small editorial product team obsessed with reader trust, fast pages, and stories that hold up after the hype
+              cycle ends.
             </p>
-            <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+            <div className="mt-6 space-y-3 text-sm text-zinc-400">
               {benefits.map((benefit) => (
-                <div key={benefit} className="rounded-md border border-border bg-secondary/40 px-3 py-2">
+                <div key={benefit} className="rounded-2xl border border-white/[0.06] bg-[#0c0c0e] px-4 py-3">
                   {benefit}
                 </div>
               ))}

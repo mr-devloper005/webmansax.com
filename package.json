@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "bootstrap:site": "node scripts/bootstrap-site.mjs"
+    "bootstrap:site": "node scripts/bootstrap-site.mjs",
+    "sync-favicon": "node scripts/sync-brand-favicon.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

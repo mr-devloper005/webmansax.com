@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus } from 'lucide-react'
+import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
@@ -17,6 +17,13 @@ const NavbarAuthControls = dynamic(() => import('@/components/shared/navbar-auth
   ssr: false,
   loading: () => null,
 })
+
+const ARTICLE_NAV_LINKS = [
+  { label: 'Markets', href: '/articles' },
+  { label: 'Contest', href: '/community' },
+  { label: 'Investment ideas', href: '/search' },
+  { label: 'Learn', href: '/about' },
+] as const
 
 const taskIcons: Record<TaskKey, any> = {
   article: FileText,
@@ -41,12 +48,12 @@ const variantClasses = {
     mobile: 'border-t border-slate-200/70 bg-white/95',
   },
   'editorial-bar': {
-    shell: 'border-b border-[#d7c4b3] bg-[#fff7ee]/90 text-[#2f1d16] backdrop-blur-xl',
-    logo: 'rounded-full border border-[#dbc6b6] bg-white shadow-sm',
-    active: 'bg-[#2f1d16] text-[#fff4e4]',
-    idle: 'text-[#72594a] hover:bg-[#f2e5d4] hover:text-[#2f1d16]',
-    cta: 'rounded-full bg-[#2f1d16] text-[#fff4e4] hover:bg-[#452920]',
-    mobile: 'border-t border-[#dbc6b6] bg-[#fff7ee]',
+    shell: 'border-b border-white/[0.08] bg-[#0a0a0c]/95 text-zinc-100 backdrop-blur-xl',
+    logo: 'rounded-full border border-white/10 bg-white/5 shadow-sm',
+    active: 'bg-white text-zinc-950',
+    idle: 'text-zinc-400 hover:bg-white/10 hover:text-white',
+    cta: 'rounded-full bg-sky-500 text-white hover:bg-sky-400',
+    mobile: 'border-t border-white/10 bg-[#0a0a0c]',
   },
   'floating-bar': {
     shell: 'border-b border-transparent bg-transparent text-white',
@@ -99,11 +106,20 @@ export function Navbar() {
 
   const navigation = useMemo(() => SITE_CONFIG.tasks.filter((task) => task.enabled && task.key !== 'profile'), [])
   const primaryNavigation = navigation.slice(0, 5)
-  const mobileNavigation = navigation.map((task) => ({
-    name: task.label,
-    href: task.route,
-    icon: taskIcons[task.key] || LayoutGrid,
-  }))
+  const mobileNavigation = useMemo(() => {
+    if (recipe.navbar === 'editorial-bar') {
+      return ARTICLE_NAV_LINKS.map((item) => ({
+        name: item.label,
+        href: item.href,
+        icon: FileText,
+      }))
+    }
+    return navigation.map((task) => ({
+      name: task.label,
+      href: task.route,
+      icon: taskIcons[task.key] || LayoutGrid,
+    }))
+  }, [recipe.navbar, navigation])
   const primaryTask = SITE_CONFIG.tasks.find((task) => task.key === recipe.primaryTask && task.enabled) || primaryNavigation[0]
   const isDirectoryProduct = recipe.homeLayout === 'listing-home' || recipe.homeLayout === 'classified-home'
 
@@ -115,12 +131,12 @@ export function Navbar() {
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-4">
             <Link href="/" className="flex shrink-0 items-center gap-3">
-              <div className={cn('flex h-12 w-12 items-center justify-center overflow-hidden p-1.5', palette.logo)}>
-                <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+              <div className={cn('flex h-16 w-16 items-center justify-center overflow-hidden p-1.5', palette.logo)}>
+                <img src="/favicon.png?v=20260421" alt={`${SITE_CONFIG.name} logo`} width="64" height="64" className="h-full w-full object-contain" />
               </div>
               <div className="min-w-0 hidden sm:block">
-                <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
-                <span className="block text-[10px] uppercase tracking-[0.24em] opacity-60">{siteContent.navbar.tagline}</span>
+                <span className="block truncate text-xl font-semibold lowercase tracking-tight">{SITE_CONFIG.name}</span>
+                <span className="block text-[10px] uppercase tracking-[0.24em] text-zinc-500 opacity-80">{siteContent.navbar.tagline}</span>
               </div>
             </Link>
 
@@ -210,27 +226,39 @@ export function Navbar() {
       <nav className={cn('mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8', isFloating ? 'h-24 pt-4' : 'h-20')}>
         <div className="flex min-w-0 flex-1 items-center gap-4 lg:gap-7">
           <Link href="/" className="flex shrink-0 items-center gap-3 whitespace-nowrap pr-2">
-            <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden p-1.5', style.logo)}>
-              <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+            <div className={cn('flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden p-1.5', style.logo)}>
+              <img src="/favicon.png?v=20260421" alt={`${SITE_CONFIG.name} logo`} width="64" height="64" className="h-full w-full object-contain" />
             </div>
             <div className="min-w-0 hidden sm:block">
-              <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
-              <span className="hidden text-[10px] uppercase tracking-[0.28em] opacity-70 sm:block">{siteContent.navbar.tagline}</span>
+              <span className="block truncate text-xl font-semibold lowercase tracking-tight">{SITE_CONFIG.name}</span>
+              <span className="hidden text-[10px] uppercase tracking-[0.28em] text-zinc-500 opacity-80 sm:block">{siteContent.navbar.tagline}</span>
             </div>
           </Link>
 
           {isEditorial ? (
-            <div className="hidden min-w-0 flex-1 items-center gap-4 xl:flex">
-              <div className="h-px flex-1 bg-[#d8c8bb]" />
-              {primaryNavigation.map((task) => {
-                const isActive = pathname.startsWith(task.route)
+            <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex">
+              {ARTICLE_NAV_LINKS.map((item) => {
+                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
                 return (
-                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold uppercase tracking-[0.18em] transition-colors', isActive ? 'text-[#2f1d16]' : 'text-[#7b6254] hover:text-[#2f1d16]')}>
-                    {task.label}
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'rounded-full px-3 py-2 text-sm font-semibold transition-colors',
+                      isActive ? 'bg-white text-zinc-950' : 'text-zinc-400 hover:bg-white/10 hover:text-white',
+                    )}
+                  >
+                    {item.label}
                   </Link>
                 )
               })}
-              <div className="h-px flex-1 bg-[#d8c8bb]" />
+              <Link
+                href="/help"
+                className="rounded-full p-2 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+                aria-label="More"
+              >
+                <MoreHorizontal className="h-5 w-5" />
+              </Link>
             </div>
           ) : isFloating ? (
             <div className="hidden min-w-0 flex-1 items-center gap-2 xl:flex">
@@ -280,7 +308,12 @@ export function Navbar() {
             </Link>
           ) : null}
 
-          <Button variant="ghost" size="icon" asChild className="hidden rounded-full md:flex">
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            className={cn('hidden rounded-full md:flex', isEditorial && 'text-zinc-300 hover:bg-white/10 hover:text-white')}
+          >
             <Link href="/search">
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
@@ -291,7 +324,7 @@ export function Navbar() {
             <NavbarAuthControls />
           ) : (
             <div className="hidden items-center gap-2 md:flex">
-              <Button variant="ghost" size="sm" asChild className="rounded-full px-4">
+              <Button variant="ghost" size="sm" asChild className={cn('rounded-full px-4', isEditorial && 'text-zinc-300 hover:bg-white/10 hover:text-white')}>
                 <Link href="/login">Sign In</Link>
               </Button>
               <Button size="sm" asChild className={style.cta}>
