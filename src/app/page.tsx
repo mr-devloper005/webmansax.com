@@ -164,7 +164,6 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
               <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
                 Search businesses, compare options, and act fast without digging through generic feeds.
               </h1>
-              <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
 
               <div className={`mt-8 grid gap-3 rounded-[2rem] p-4 ${tone.panel} md:grid-cols-[1.25fr_0.8fr_auto]`}>
                 <div className="rounded-full bg-black/5 px-4 py-3 text-sm">What do you need today?</div>
@@ -271,7 +270,6 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
 function EditorialHome({ primaryTask, articlePosts, supportTasks }: { primaryTask?: EnabledTask; articlePosts: SitePost[]; supportTasks: EnabledTask[] }) {
   const tone = getEditorialTone()
   const lead = articlePosts[0]
-  const side = articlePosts.slice(1, 5)
 
   return (
     <main className={tone.shell}>
@@ -285,7 +283,6 @@ function EditorialHome({ primaryTask, articlePosts, supportTasks }: { primaryTas
             <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
               Essays, analysis, and slower reading designed like a publication, not a dashboard.
             </h1>
-            <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href={primaryTask?.route || '/articles'} className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
                 Start reading
@@ -297,18 +294,6 @@ function EditorialHome({ primaryTask, articlePosts, supportTasks }: { primaryTas
             </div>
           </div>
 
-          <aside className={`rounded-[2rem] p-6 ${tone.panel}`}>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Inside this issue</p>
-            <div className="mt-5 space-y-5">
-              {side.map((post) => (
-                <Link key={post.id} href={`/articles/${post.slug}`} className="block border-b border-black/10 pb-5 last:border-b-0 last:pb-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-60">Feature</p>
-                  <h3 className="mt-2 text-xl font-semibold">{post.title}</h3>
-                  <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{post.summary || 'Long-form perspective with a calmer reading rhythm.'}</p>
-                </Link>
-              ))}
-            </div>
-          </aside>
         </div>
 
         {lead ? (
@@ -360,7 +345,6 @@ function VisualHome({ primaryTask, imagePosts, profilePosts, articlePosts }: { p
             <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
               Image-led discovery with creator profiles and a more gallery-like browsing rhythm.
             </h1>
-            <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href={primaryTask?.route || '/images'} className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
                 Open gallery
@@ -426,7 +410,6 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts, articlePosts }
             <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
               Save, organize, and revisit resources through shelves, boards, and curated collections.
             </h1>
-            <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href={primaryTask?.route || '/sbm'} className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
                 Open collections
