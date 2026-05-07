@@ -1,4 +1,3 @@
-import { ContentImage } from "@/components/shared/content-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MapPin, Globe, Phone, Tag, Mail } from "lucide-react";
@@ -11,10 +10,12 @@ import { buildPostUrl, fetchTaskPostBySlug, fetchTaskPosts } from "@/lib/task-da
 import { SITE_CONFIG, getTaskConfig, type TaskKey } from "@/lib/site-config";
 import type { SitePost } from "@/lib/site-connector";
 import { TaskImageCarousel } from "@/components/tasks/task-image-carousel";
+import { TaskImageGallery } from "@/components/tasks/task-image-gallery";
 import { cn } from "@/lib/utils";
 import { ArticleComments } from "@/components/tasks/article-comments";
 import { SchemaJsonLd } from "@/components/seo/schema-jsonld";
 import { RichContent, formatRichHtml } from "@/components/shared/rich-content";
+import { ImageLightbox } from "@/components/shared/image-lightbox";
 import { getFactoryState } from "@/design/factory/get-factory-state";
 import { getProductKind } from "@/design/factory/get-product-kind";
 import { DirectoryTaskDetailPage } from "@/design/products/directory/task-detail-page";
@@ -147,21 +148,11 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   const description = content.description || post.summary || "Details coming soon.";
   const descriptionHtml = !isArticle ? formatRichHtml(description, "Details coming soon.") : "";
   const articleHtml = isArticle ? formatArticleHtml(content, post) : "";
-  const articleSummary =
-    post.summary ||
-    (typeof content.excerpt === "string" ? content.excerpt : "") ||
-    "";
+  const articleSummary = post.summary || (typeof content.excerpt === "string" ? content.excerpt : "") || "";
   const articleAuthor =
     (typeof content.author === "string" && content.author.trim()) ||
     post.authorName ||
     "Editorial Team";
-  const articleDate = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
   const postTags = Array.isArray(post.tags) ? post.tags.filter((tag) => typeof tag === "string") : [];
   const location = content.address || content.location;
   const images = getImageUrls(post, content);
@@ -256,54 +247,77 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
           href={taskConfig?.route || "/"}
           className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
         >
-          ← Back to {taskConfig?.label || "posts"}
+          Back to {taskConfig?.label || "posts"}
         </Link>
 
-        <div
-          className={cn(
-            "grid gap-10",
-            hideSidebar ? "lg:grid-cols-1" : "lg:grid-cols-[2fr_1fr]"
-          )}
-        >
+        <div className={cn("grid gap-10", hideSidebar ? "lg:grid-cols-1" : "lg:grid-cols-[2fr_1fr]")}>
           <div className={cn(isClassified ? "space-y-8" : "")}>
             {isArticle ? (
-              <div className="mx-auto w-full max-w-4xl space-y-6">
-                <h1 className="text-4xl font-semibold leading-tight text-foreground">
-                  {post.title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span>By {articleAuthor}</span>
-                  {articleDate ? <span>{articleDate}</span> : null}
-                  <Badge variant="secondary" className="inline-flex items-center gap-1">
-                    <Tag className="h-3.5 w-3.5" />
-                    {category}
-                  </Badge>
+              <div className="mx-auto w-full max-w-5xl space-y-10">
+                <section className="overflow-hidden rounded-[2rem] border border-border bg-[linear-gradient(180deg,#fffdf8_0%,#f8f4ee_100%)]">
+                  <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr] lg:p-10">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                        <Badge variant="secondary" className="inline-flex items-center gap-1 rounded-full px-3 py-1">
+                          <Tag className="h-3.5 w-3.5" />
+                          {category}
+                        </Badge>
+                      </div>
+                      <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-[-0.04em] text-foreground sm:text-5xl">
+                        {post.title}
+                      </h1>
+                      {articleSummary ? (
+                        <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
+                          {articleSummary}
+                        </p>
+                      ) : null}
+                      <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-border/70 pt-6 text-sm text-muted-foreground">
+                        <span className="font-medium text-foreground">By {articleAuthor}</span>
+                        {postTags.length ? (
+                          <div className="flex flex-wrap gap-2">
+                            {postTags.map((tag) => (
+                              <Badge key={tag} variant="outline" className="rounded-full">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    {images[0] ? (
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-border bg-muted">
+                        <ImageLightbox
+                          src={images[0]}
+                          alt={`${post.title} featured image`}
+                          fill
+                          imageClassName="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 40vw"
+                          intrinsicWidth={1200}
+                          intrinsicHeight={1500}
+                          priority
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </section>
+
+                <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+                  <RichContent html={articleHtml} className="leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
+                  <aside className="h-fit rounded-[1.75rem] border border-border bg-card/70 p-6">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Story details</p>
+                    <div className="mt-5 space-y-4 text-sm text-muted-foreground">
+                      <div>
+                        <p className="font-medium text-foreground">Category</p>
+                        <p className="mt-1">{category}</p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">Author</p>
+                        <p className="mt-1">{articleAuthor}</p>
+                      </div>
+                    </div>
+                  </aside>
                 </div>
-                {postTags.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {postTags.map((tag) => (
-                      <Badge key={tag} variant="outline">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : null}
-                {articleSummary ? (
-                  <p className="text-base leading-7 text-muted-foreground">{articleSummary}</p>
-                ) : null}
-                {images[0] ? (
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted">
-                    <ContentImage
-                      src={images[0]}
-                      alt={`${post.title} featured image`}
-                      fill
-                      className="object-cover"
-                      intrinsicWidth={1600}
-                      intrinsicHeight={900}
-                    />
-                  </div>
-                ) : null}
-                <RichContent html={articleHtml} className="leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
                 <ArticleComments slug={post.slug} />
               </div>
             ) : null}
@@ -312,7 +326,11 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
               <>
                 {!isBookmark ? (
                   <div className={cn(isClassified ? "w-full" : "")}>
-                    <TaskImageCarousel images={images} />
+                    {task === "comment" ? (
+                      <TaskImageGallery images={images} />
+                    ) : (
+                      <TaskImageCarousel images={images} />
+                    )}
                   </div>
                 ) : null}
 
@@ -380,11 +398,16 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
             ) : null}
 
             {content.highlights?.length && !isArticle ? (
-              <div className={cn("mt-8 rounded-2xl border border-border bg-card p-6", isClassified ? "mx-auto w-full max-w-4xl" : "")}>
+              <div
+                className={cn(
+                  "mt-8 rounded-2xl border border-border bg-card p-6",
+                  isClassified ? "mx-auto w-full max-w-4xl" : ""
+                )}
+              >
                 <h2 className="text-lg font-semibold text-foreground">Highlights</h2>
                 <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
                   {content.highlights.map((item) => (
-                    <li key={item}>• {item}</li>
+                    <li key={item}>- {item}</li>
                   ))}
                 </ul>
               </div>
@@ -403,13 +426,12 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                 </div>
               </div>
             ) : null}
-
           </div>
 
-          {!hideSidebar ? (
+          {!hideSidebar && task !== "comment" ? (
             <aside className="space-y-6">
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-lg font-semibold text-foreground">Listing details</h2>
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h2 className="text-lg font-semibold text-foreground">Listing details</h2>
                 <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                   {content.website && (
                     <div className="flex items-start gap-2">
@@ -448,58 +470,55 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                     </div>
                   )}
                 </div>
-              {content.website ? (
-                <Button className="mt-5 w-full" asChild>
-                  <a href={content.website} target="_blank" rel="noreferrer">
-                    Visit Website
-                  </a>
-                </Button>
-              ) : null}
-            </div>
-
-            {mapEmbedUrl ? (
-              <div className="rounded-2xl border border-border bg-card p-4">
-                <p className="text-sm font-semibold text-foreground">Location map</p>
-                <div className="mt-4 overflow-hidden rounded-xl border border-border">
-                  <iframe
-                    title="Business location map"
-                    src={mapEmbedUrl}
-                    className="h-56 w-full"
-                    loading="lazy"
-                  />
-                </div>
+                {content.website ? (
+                  <Button className="mt-5 w-full" asChild>
+                    <a href={content.website} target="_blank" rel="noreferrer">
+                      Visit Website
+                    </a>
+                  </Button>
+                ) : null}
               </div>
-            ) : null}
 
-          </aside>
+              {mapEmbedUrl ? (
+                <div className="rounded-2xl border border-border bg-card p-4">
+                  <p className="text-sm font-semibold text-foreground">Location map</p>
+                  <div className="mt-4 overflow-hidden rounded-xl border border-border">
+                    <iframe
+                      title="Business location map"
+                      src={mapEmbedUrl}
+                      className="h-56 w-full"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </aside>
           ) : null}
         </div>
 
         <section className="mt-12">
           {related.length ? (
             <>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">
-                More in {category}
-              </h2>
-              {taskConfig?.route && (
-                <Link
-                  href={taskConfig.route}
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  View all
-                </Link>
-              )}
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((item) => (
-                <TaskPostCard
-                  key={item.id}
-                  post={item}
-                  href={buildPostUrl(task, item.slug)}
-                />
-              ))}
-            </div>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">More in {category}</h2>
+                {taskConfig?.route && (
+                  <Link
+                    href={taskConfig.route}
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    View all
+                  </Link>
+                )}
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {related.map((item) => (
+                  <TaskPostCard
+                    key={item.id}
+                    post={item}
+                    href={buildPostUrl(task, item.slug)}
+                  />
+                ))}
+              </div>
             </>
           ) : null}
           <nav className="mt-6 rounded-2xl border border-border bg-card/60 p-4">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { Inter } from 'next/font/google'
 
 import './globals.css'
 
@@ -8,6 +9,12 @@ import { Toaster } from '@/components/ui/toaster'
 import { AuthProvider } from '@/lib/auth-context'
 import { buildSiteMetadata } from '@/lib/seo'
 import { getFactoryState } from '@/design/factory/get-factory-state'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildSiteMetadata()
@@ -21,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         data-site-shell={recipe.homeLayout}
         data-motion-pack={recipe.motionPack}
-        className={`${brandPack.bodyClassName} ${brandPack.fontClassName} ${brandPack.paletteClassName}`}
+        className={`${inter.variable} ${brandPack.bodyClassName} ${brandPack.fontClassName} ${brandPack.paletteClassName}`}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <AuthProvider>

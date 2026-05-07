@@ -9,8 +9,8 @@ import { Footer } from "@/components/shared/footer";
 import { TaskImageCarousel } from "@/components/tasks/task-image-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ContentImage } from "@/components/shared/content-image";
 import { RichContent, formatRichHtml } from "@/components/shared/rich-content";
+import { ImageLightbox } from "@/components/shared/image-lightbox";
 import { SITE_CONFIG, type TaskKey } from "@/lib/site-config";
 import { getLocalPostBySlug } from "@/lib/local-posts";
 
@@ -41,8 +41,8 @@ const getContent = (post: any): PostContent => {
 const getImageUrls = (post: any, content: PostContent) => {
   const media = Array.isArray(post.media) ? post.media : [];
   const mediaImages = media
-    .map((item) => item?.url)
-    .filter((url): url is string => isValidImageUrl(url));
+    .map((item: { url?: string } | null | undefined) => item?.url)
+    .filter((url: string | undefined): url is string => isValidImageUrl(url));
   const contentImages = Array.isArray(content.images)
     ? content.images.filter((url): url is string => isValidImageUrl(url))
     : [];
@@ -114,7 +114,7 @@ export default function LocalPostDetailPage() {
         <main className="mx-auto max-w-3xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold text-foreground">Post not found</h1>
           <p className="mt-2 text-muted-foreground">
-            This local post isn’t available on this device.
+            This local post is not available on this device.
           </p>
           <Button className="mt-6" asChild>
             <Link href="/">Back home</Link>
@@ -142,17 +142,40 @@ export default function LocalPostDetailPage() {
           href={taskConfig.route}
           className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
         >
-          ← Back to {taskConfig.label}
+          Back to {taskConfig.label}
         </Link>
 
         {isArticle ? (
-          <div className="mx-auto w-full max-w-4xl space-y-6">
-            <h1 className="text-4xl font-semibold leading-tight text-foreground">{post.title}</h1>
-            {images[0] ? (
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted">
-                <ContentImage src={images[0]} alt={post.title} fill className="object-cover" intrinsicWidth={1600} intrinsicHeight={900} />
+          <div className="mx-auto w-full max-w-5xl space-y-10">
+            <section className="overflow-hidden rounded-[2rem] border border-border bg-[linear-gradient(180deg,#fffdf8_0%,#f8f4ee_100%)]">
+              <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr] lg:p-10">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    Local draft
+                  </div>
+                  <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-[-0.04em] text-foreground sm:text-5xl">
+                    {post.title}
+                  </h1>
+                  <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
+                    {description}
+                  </p>
+                </div>
+                {images[0] ? (
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-border bg-muted">
+                    <ImageLightbox
+                      src={images[0]}
+                      alt={post.title}
+                      fill
+                      imageClassName="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 40vw"
+                      intrinsicWidth={1200}
+                      intrinsicHeight={1500}
+                      priority
+                    />
+                  </div>
+                ) : null}
               </div>
-            ) : null}
+            </section>
             <RichContent html={formatRichHtml(description, "Details coming soon.")} />
           </div>
         ) : isPdf ? (
@@ -246,7 +269,7 @@ export default function LocalPostDetailPage() {
                   <h2 className="text-base font-semibold text-foreground">Highlights</h2>
                   <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                     {content.highlights.map((item) => (
-                      <li key={item}>• {item}</li>
+                      <li key={item}>- {item}</li>
                     ))}
                   </ul>
                 </div>
