@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FileText, Building2, LayoutGrid, Tag, Github, Twitter, Linkedin, Image as ImageIcon, User, ArrowRight, Sparkles } from 'lucide-react'
+import { FileText, Building2, LayoutGrid, Tag, Github, Twitter, Linkedin, Image as ImageIcon, User, ArrowRight } from 'lucide-react'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { siteContent } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
@@ -26,9 +26,8 @@ const footerLinks = {
   })),
   company: [
     { name: 'About', href: '/about' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Press', href: '/press' },
+    { name: 'Contact Us', href: '/contact' },
+    // { name: 'Careers', href: '/careers' },
   ],
   resources: [
     { name: 'Help Center', href: '/help' },
@@ -38,7 +37,7 @@ const footerLinks = {
   ],
   legal: [
     { name: 'Privacy', href: '/privacy' },
-    { name: 'Terms', href: '/terms' },
+    { name: 'Terms & Conditions', href: '/terms' },
     { name: 'Cookies', href: '/cookies' },
     { name: 'Licenses', href: '/licenses' },
   ],
@@ -85,7 +84,7 @@ export function Footer() {
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr_1fr]">
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-7">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-white/8 p-1.5">
+                <div className="flex h-12 w-12 items-center justify-center overflow-hidden">
                   <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
                 </div>
                 <div>
@@ -141,10 +140,6 @@ export function Footer() {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#dbc6b6] bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#72594a]">
-                <Sparkles className="h-3.5 w-3.5" />
-                Editorial desk
-              </div>
               <h3 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">{SITE_CONFIG.name}</h3>
             </div>
             <div>
@@ -175,7 +170,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <div className="h-11 w-11 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
+              <div className="h-11 w-11 overflow-hidden">
                 <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="44" height="44" className="h-full w-full object-contain" />
               </div>
               <div>

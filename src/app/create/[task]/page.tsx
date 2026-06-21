@@ -6,10 +6,10 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Save } from "lucide-react";
 import { NavbarShell } from "@/components/shared/navbar-shell";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/auth-context";
 import { CATEGORY_OPTIONS } from "@/lib/categories";
@@ -289,7 +289,6 @@ export default function CreateTaskPage() {
         <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
           <div className="flex flex-wrap gap-2">
             <Badge variant="secondary">{taskConfig.label}</Badge>
-            <Badge variant="outline">Local-only</Badge>
           </div>
 
           <div className="mt-6 grid gap-6">
@@ -378,7 +377,7 @@ export default function CreateTaskPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Button onClick={handleSubmit}>
               <Save className="mr-2 h-4 w-4" />
-              Save locally
+              Save
             </Button>
             <Button variant="ghost" asChild>
               <Link href={taskConfig.route}>

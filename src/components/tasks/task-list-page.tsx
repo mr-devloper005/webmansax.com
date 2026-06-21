@@ -243,11 +243,13 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
             {intro.paragraphs.map((paragraph) => (
               <p key={paragraph.slice(0, 40)} className={`mt-4 text-sm leading-7 ${ui.muted}`}>{paragraph}</p>
             ))}
-            <div className="mt-4 flex flex-wrap gap-4 text-sm">
-              {intro.links.map((link) => (
-                <a key={link.href} href={link.href} className="font-semibold text-foreground hover:underline">{link.label}</a>
-              ))}
-            </div>
+            {intro.links.length ? (
+              <div className="mt-4 flex flex-wrap gap-4 text-sm">
+                {intro.links.map((link) => (
+                  <a key={link.href} href={link.href} className="font-semibold text-foreground hover:underline">{link.label}</a>
+                ))}
+              </div>
+            ) : null}
           </section>
         ) : null}
 
